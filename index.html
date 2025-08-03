@@ -3,17 +3,16 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>CraftWeaker Recipe Generator</title>
-	</head>
-
-	<body>
+		<title>CraftTweaker Recipe Generator</title>
 
 		<script src=" https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js "></script>
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
 		<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap" rel="stylesheet">
+	</head>
 
+	<body>
 		<style>
  		   :root {
 				--col-red-bold: #DC0C24;
@@ -177,6 +176,20 @@
 
 			.terminal-result {
 				word-break: break-all;
+				overflow: hidden;
+				position: relative;
+			}
+
+			.terminal-result .alert{
+				opacity: 0;
+				transition: opacity 0.3s;
+				position: absolute;
+				left: 0;
+				text-align: center;
+				width: 100%;
+				padding: 5px 0;
+				background-color: var(--col-green-terminal);
+				color: var(--col-bg-termnal);
 			}
 			
 			.btn-res {
@@ -248,9 +261,9 @@
 
 		<div class="banner">
 			<h1><span class="font-space col-red-bold">CraftTweaker</span> <br> Recipe Generator</h1>
-			<h6 class="comment" style="margin: -10px;">Version 0.1 - Created by Hermina Tealie</h6>
+			<h6 class="comment" style="margin: -10px;">Version 0.2 - Created by Hermina Tealie</h6>
 			<h2 class="col-purple-bright">Converts your recipes to CraftTweaker syntax.</h2>
-			<p>Type in the inputs and outputs and you will get a line of KubeJS recipe!</p>
+			<p>Type in the inputs and outputs and you will get a line of CraftTweaker recipe!</p>
 			<h6 class="comment">This generator is designed as a single standalone html file, <br> simply save this page with Ctrl-S and run it on any computer!</h6>
 		</div>
 
@@ -285,19 +298,17 @@
 				</label>
 				
 				<label class="radio-btn">
-					<input type="radio" name="recipe">
+					<input type="radio" name="recipe" disabled>
 					<span class="name">Create - Milling</span>
 				</label>
 
 				<label class="radio-btn">
-					<input type="radio" name="recipe">
+					<input type="radio" name="recipe" disabled>
 					<span class="name">Create - Crushing</span>
 				</label>
 			</div>
-			
-			<p class="comment">Used in modding DeceasedCraft v5, converting Tac into TacZ.</p>
 
-			<div class="recipe recipe-shapeless">
+			<div class="recipe recipe-shapeless" style="margin: 30px 0 0 0;">
 
 				<div class="recipe-heading">
 					<h2>Shapeless Crafting</h2>
@@ -310,13 +321,14 @@
 						</svg>
 					</div>
 				</div>
+				<p class="comment">Example shows a conversion between a TAC weapon and their TACZ counterpart, used in an unofficial edit of DeceasedCraft v5.</p>
 
 				<h3>Recipe Name</h3>
 
 				<div class="terminal">
 					<div class="command-line">
 						<span>Name</span>
-						<input type="text" class="terminal-field" placeholder="2-tacz-ak">
+						<input type="text" class="terminal-field shapeless-name" placeholder="2_tacz_ak">
 					</div>
 				</div>
 
@@ -325,7 +337,7 @@
 				<div class="terminal">
 					<div class="command-line">
 						<span>Input #1</span>
-						<input type="text" class="terminal-field" placeholder="tac:ak47"/>
+						<input type="text" class="terminal-field shapeless-in-1" placeholder="tac:ak47"/>
 					</div>
 				</div>
 
@@ -335,22 +347,22 @@
 
 				<div class="terminal">
 					<div class="command-line">
-						<span>Output #1</span>
-						<input type="text" class="terminal-field" placeholder="tacz:modern_kinetic_gun"/>
+						<span>Output</span>
+						<input type="text" class="terminal-field shapeless-out-main" placeholder="tacz:modern_kinetic_gun"/>
 					</div>
 				</div>
 
 				<div class="terminal" style="margin-top: 20px;">
 					<div class="command-line">
 						<span>Tag</span>
-						<input type="text" class="terminal-field" placeholder="GunId: &quot;tacz:ak47&quot;">
+						<input type="text" class="terminal-field shapeless-out-tag" placeholder="GunId: &quot;tacz:ak47&quot;">
 					</div>
 				</div>
 				
 				<div class="terminal" style="margin-top: 20px;">
 					<div class="command-line">
 						<span>Amount</span>
-						<input type="text" class="terminal-field" placeholder="1"/>
+						<input type="text" class="terminal-field shapeless-out-amount" placeholder="1"/>
 					</div>
 				</div>
 			</div>
@@ -359,23 +371,44 @@
 		<div class="div-output b-sharp-top bg-dotted">
 			<h2>CraftTweaker Script</h2>
 
-			<button onclick="resultGenerate()" class="btn-res btn-res-generate">Generate Result</button>
+			<button onclick="fieldDefault()" class="btn-res">Load Default</button>
+
+			<script>
+				function fieldDefault() {
+					$(".shapeless-name").val("2_tacz_ak");
+					$(".shapeless-in-1").val("tac:ak47");
+					$(".shapeless-out-main").val("tacz:modern_kinetic_gun");
+					$(".shapeless-out-tag").val("GunId: \"tacz:ak47\"");
+					$(".shapeless-out-amount").val("1");
+					resultShapeless();
+				}
+			</script>
+
+			<button onclick="resultShapeless()" class="btn-res">Generate Result</button>
 
 			<div class="terminal terminal-result">
 				<div class="command-line">
 					<p class="terminal-field" id="result">craftingTable.addShapeless("2_tacz_ak", &lt;item:tacz:modern_kinetic_gun&gt;.withTag({GunId: "tacz:ak47"}), [&lt;item:tac:ak47&gt;]);</p>
+					<p class="alert">Copied to Clipboard!</p>
 				</div>
 			</div>
 
-			<button onclick="resultCopy()" class="btn-res btn-res-copy">Copy Result</button>
+			<button onclick="resultCopy()" class="btn-res">Copy Result</button>
+
+			<script>
+				$(document).ready(function() {
+					$(".alert").css("opacity", 0);
+				});
+			</script>
 			<script>
 				function resultCopy() {
-					// Get the text from #result using jQuery
 					var text = $("#result").text();
-					// Use the Clipboard API to copy
 					navigator.clipboard.writeText(text)
 						.then(function() {
-							alert("Copied to clipboard!");
+							$(".alert").css("opacity", 1);
+							setTimeout(function() {
+								$(".alert").css("opacity", 0);
+							}, 1200);
 						})
 						.catch(function() {
 							alert("Failed to copy.");
@@ -383,8 +416,31 @@
 				}
 			</script>
 
-			<!-- <script>
-				function resultGenerate()
-			</script> -->
+			<script>
+				function resultShapeless() {
+					// Get the values from the input fields
+					var name = $(".shapeless-name").val();
+					var input1 = $(".shapeless-in-1").val();
+					var output = $(".shapeless-out-main").val();
+					var tag = $(".shapeless-out-tag").val();
+					var amount = $(".shapeless-out-amount").val();
+
+					// Generate the CraftTweaker script
+					var result = `craftingTable.addShapeless("${name}", <item:${output}>`;
+
+					if (tag && tag !== "") {
+						result += `.withTag({${tag}})`;
+					}
+					
+					if (amount && amount !== "1") {
+						result += ` * ${amount}`;
+					}
+
+					result += `, [<item:${input1}>]);`;
+
+					// Set the result in the terminal result field
+					$("#result").text(result);
+				}
+			</script>
 	</body>
 </html>
